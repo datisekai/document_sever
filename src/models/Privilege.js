@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const Privilege = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const Privilege = new Schema(
   {
     url_match: {
       type: String,

@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const Subjects = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const Subjects = new Schema(
   {
     sub: {
       type: String,

@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const Users = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const Users = new Schema(
   {
     username: {
       type: String,
@@ -16,19 +18,15 @@ const Users = new mongoose.Schema(
     },
     mssv: {
       type: String,
-      required: true,
     },
     avatar: {
       type: String,
-      required: true,
     },
     name: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
-      required: true,
     },
   },
   {

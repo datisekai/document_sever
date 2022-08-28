@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const UserPrivilege = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const UserPrivilege = new Schema(
   {
     user_id: {
       type: Schema.Types.ObjectId,

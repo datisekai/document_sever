@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
-const University = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const University = new Schema(
   {
     uni: {
       type: String,
@@ -18,7 +20,6 @@ const University = new mongoose.Schema(
     },
     logo: {
       type: String,
-      required: true,
     },
   },
   {

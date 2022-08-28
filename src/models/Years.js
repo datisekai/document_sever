@@ -1,10 +1,11 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const Years = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const Years = new Schema(
   {
     name: {
       type: String,
-      ref: "users",
       required: true,
     },
     status: {

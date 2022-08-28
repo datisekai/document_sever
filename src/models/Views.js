@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const Views = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const Views = new Schema(
   {
     count: {
       type: Number,

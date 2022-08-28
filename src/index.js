@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import connectDB from "./utils/connectDB.js";
+import UserRoute from "./routers/UserRoute.js";
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ app.use(cors({ origin: "*" }));
 app.get("/", (req, res) => {
   res.send("Hell from server!");
 });
+
+app.use("/api/user", UserRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running in ${process.env.PORT}`);

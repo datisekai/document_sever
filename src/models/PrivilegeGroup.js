@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
-const PrivilegeGroup = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const PrivilegeGroup = new Schema(
   {
     name: {
       type: String,
@@ -16,8 +18,7 @@ const PrivilegeGroup = new mongoose.Schema(
       required: true,
     },
     parentId: {
-      type: Number,
-      required: true,
+      type: String,
     },
     position: {
       type: Number,

@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const Exams = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const Exams = new Schema(
   {
     sub_id: {
       type: Schema.Types.ObjectId,
@@ -12,7 +14,8 @@ const Exams = new mongoose.Schema(
       required: true,
     },
     year: {
-      type: Number,
+      type: Schema.Types.ObjectId,
+      ref: "years",
       required: true,
     },
     status: {

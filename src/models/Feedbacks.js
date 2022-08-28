@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
-
-const Sliders = new mongoose.Schema(
+import mongoose from "mongoose";
+const Schema = mongoose.Schema;
+const Sliders = new Schema(
   {
     content: {
       type: String,

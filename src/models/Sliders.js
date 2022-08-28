@@ -1,6 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const Sliders = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const Sliders = new Schema(
   {
     image: {
       type: String,
@@ -8,7 +10,6 @@ const Sliders = new mongoose.Schema(
     },
     url: {
       type: String,
-      required: true,
     },
   },
   {

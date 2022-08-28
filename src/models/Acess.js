@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
-const Acess = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const Access = new Schema(
   {
     count: {
       type: Number,
@@ -12,4 +14,4 @@ const Acess = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("acess", Acess);
+export default mongoose.model("access", Access);
