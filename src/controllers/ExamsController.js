@@ -12,7 +12,10 @@ const ExamsController = {
         .json({ success: false, message: "Thiếu tham số!" });
 
     try {
-      const newExams = new Exams({ ...data, slug: slugify(data.name) });
+      const newExams = new Exams({
+        ...data,
+        slug: slugify(data.name.toLowerCase()),
+      });
       await newExams.save();
       return res.json({ success: true, newExams });
     } catch (error) {
