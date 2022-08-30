@@ -13,6 +13,12 @@ const UniversityController = {
     }
   },
   addUniversity: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("university:create")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const data = req.body;
 
     if (!data.name || !data.uni)
@@ -33,6 +39,12 @@ const UniversityController = {
     }
   },
   updateUniversity: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("university:update")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const data = req.body;
     const id = req.params?.id;
 
@@ -60,6 +72,12 @@ const UniversityController = {
     }
   },
   deleteUniversity: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("university:delete")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const id = req.params?.id;
 
     try {

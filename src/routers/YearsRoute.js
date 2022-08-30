@@ -1,5 +1,6 @@
 import express from "express";
 import YearController from "../controllers/YearsController.js";
+import isToken from "../middlewares/isToken.js";
 
 const router = express.Router();
 
@@ -7,12 +8,12 @@ const router = express.Router();
 router.get("/", YearController.getAll);
 
 // POST /api/years
-router.post("/", YearController.addYear);
+router.post("/", isToken, YearController.addYear);
 
 // PUT /api/years/:id
-router.put("/:id", YearController.updateYear);
+router.put("/:id", isToken, YearController.updateYear);
 
 // DELETE /api/years/:id
-router.delete("/:id", YearController.deleteYear);
+router.delete("/:id", isToken, YearController.deleteYear);
 
 export default router;

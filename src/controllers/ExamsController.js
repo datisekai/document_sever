@@ -26,6 +26,12 @@ const ExamsController = {
     }
   },
   updateExams: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("exam:update")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const id = req.query?.id;
     const data = req.body;
 
@@ -44,7 +50,48 @@ const ExamsController = {
 
       return res.json({
         success: true,
-        data: data,
+        data: isUpdateSuccess,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Server đang gặp lỗi, vui lòng chờ!",
+      });
+    }
+  },
+  updateMyExam: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("exam:myUpdate")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
+    const id = req.query?.id;
+    const user_id = req.user_id;
+    const data = req.body;
+
+    try {
+      const currentExam = await Exams.findById(id);
+      if (!currentExam || currentExam?.user_id !== user_id) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Bạn không có quyền truy cập" });
+      }
+      const isUpdateSuccess = await Exams.findOneAndUpdate(
+        { _id: id },
+        { ...data }
+      );
+
+      if (!isUpdateSuccess) {
+        return res.status(400).json({
+          success: false,
+          message: "Cập nhật thất bại, vui lòng thử lại!",
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: isUpdateSuccess,
       });
     } catch (error) {
       return res.status(500).json({
@@ -94,6 +141,12 @@ const ExamsController = {
     }
   },
   deleteExams: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("exam:delete")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const id = req.query?.id;
 
     try {
@@ -112,6 +165,46 @@ const ExamsController = {
       return res.json({
         success: true,
         message: "Xóa thành công!",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Server đang gặp lỗi, vui lòng chờ!",
+      });
+    }
+  },
+  deleteMyExam: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("exam:myDelete")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
+    const id = req.query?.id;
+    const user_id = req.user_id;
+
+    try {
+      const currentExam = await Exams.findById(id);
+      if (!currentExam || currentExam?.user_id !== user_id) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Bạn không có quyền truy cập" });
+      }
+      const isDeleteSuccess = await Exams.findOneAndUpdate(
+        { _id: id },
+        { status: 0 }
+      );
+
+      if (!isDeleteSuccess) {
+        return res.status(400).json({
+          success: false,
+          message: "Xóa thất bại, vui lòng thử lại!",
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: isDeleteSuccess,
       });
     } catch (error) {
       return res.status(500).json({
@@ -176,6 +269,12 @@ const ExamsController = {
     }
   },
   getMyExam: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("exam:myGet")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const user_id = req.query?.user_id;
 
     try {
@@ -189,18 +288,164 @@ const ExamsController = {
     }
   },
   searchExam: async (req, res) => {
-    const q = req.query?.q;
+    const { text, uni_id, sub_id, year_id, page = 1, limit = 10 } = req.query;
+    const skip = (page - 1) * limit;
 
-    if (!q.trim()) {
+    if (!text.trim() && !uni_id && !sub_id && !year_id) {
       return res
         .status(400)
-        .json({ success: false, message: "Thiếu từ khóa tìm kiếm!" });
+        .json({ success: false, message: "Vui lòng nhập đầy đủ" });
     }
 
     try {
-      const textReg = new RegExp(q, "i");
-      const results = await Exams.find({ title: textReg });
-      return res.json({ success: true, results });
+      //Text
+      if (text && !uni_id && !sub_id && !year_id) {
+        const textReg = new RegExp(text, "i");
+        const results = await Exams.find({ title: textReg, status: true })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      if (text && uni_id && !sub_id && !year_id) {
+        const textReg = new RegExp(text, "i");
+        const uniList = await Subjects.find({ uni_id });
+        const subList = uniList._doc.map((item) => item._id);
+
+        const results = await Exams.find({
+          title: textReg,
+          sub_id: {
+            $in: subList,
+          },
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      if (text && sub_id && !year_id) {
+        const textReg = new RegExp(text, "i");
+
+        const results = await Exams.find({
+          title: textReg,
+          sub_id,
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      if (text && !uni_id && !sub_id && year_id) {
+        const textReg = new RegExp(text, "i");
+
+        const results = await Exams.find({
+          title: textReg,
+          year_id,
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      //Uni_id
+      if (!text && uni_id && !sub_id && !year_id) {
+        const uniList = await Subjects.find({ uni_id });
+        const subList = uniList._doc.map((item) => item._id);
+
+        const results = await Exams.find({
+          sub_id: {
+            $in: subList,
+          },
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      if (!text && uni_id && !sub_id && year_id) {
+        const uniList = await Subjects.find({ uni_id });
+        const subList = uniList._doc.map((item) => item._id);
+
+        const results = await Exams.find({
+          sub_id: {
+            $in: subList,
+          },
+          year_id,
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      //Sub_id
+      if (!text && !uni_id && sub_id && !year_id) {
+        const results = await Exams.find({
+          sub_id,
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      if (!text && !uni_id && sub_id && year_id) {
+        const results = await Exams.find({
+          sub_id,
+          year_id,
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      //Year_id
+      if (!text && !uni_id && !sub_id && year_id) {
+        const results = await Exams.find({
+          year_id,
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      if (text && sub_id && year_id) {
+        const textReg = new RegExp(text, "i");
+
+        const results = await Exams.find({
+          title: textReg,
+          year_id,
+          sub_id,
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
+
+      if (text && uni_id && !sub_id && year_id) {
+        const uniList = await Subjects.find({ uni_id });
+        const subList = uniList._doc.map((item) => item._id);
+        const textReg = new RegExp(text, "i");
+
+        const results = await Exams.find({
+          title: textReg,
+          year_id,
+          sub_id: {
+            $in: subList,
+          },
+          status: true,
+        })
+          .skip(skip)
+          .limit(limit);
+        return res.json({ success: true, data: results });
+      }
     } catch (error) {
       console.log(error);
       return res.status(500).json({

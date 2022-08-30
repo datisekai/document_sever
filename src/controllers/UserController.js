@@ -32,6 +32,25 @@ const UserController = {
 
       await newUser.save();
 
+      const UserPrivilegeDefault = [
+        "630ddadda281cca915e3d4dd",
+        "630ddb01a281cca915e3d4e1",
+        "630ddb45d2d7378cdb9b0008",
+        "630ddc4cd2d7378cdb9b0016",
+        "630ddc67d2d7378cdb9b001a",
+        "630ddc78d2d7378cdb9b001c",
+      ];
+
+      await Promise.all(
+        UserPrivilegeDefault.map((item) => {
+          const newUserPrivilege = new UserPrivilege({
+            user_id: newUser._id,
+            privilege: item,
+          });
+          return newUserPrivilege.save();
+        })
+      );
+
       const token = jwt.sign(
         { _id: newUser._id, username: newUser.username },
         process.env.SECRET_JWT,
@@ -82,7 +101,7 @@ const UserController = {
         userRole.forEach((item) => {
           if (
             !privilege_group_pre.some(
-              (element) => element === userRole.privilege.group_id
+              (element) => element === item.privilege.group_id
             )
           ) {
             privilege_group_pre.push(item.privilege.group_id);

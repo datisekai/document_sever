@@ -2,6 +2,12 @@ import Subjects from "../models/Subjects.js";
 
 const SubjectsController = {
   addSubject: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("subject:create")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const data = req.body;
 
     if (!data.sub || !data.name || !data.uni_id)
@@ -22,6 +28,12 @@ const SubjectsController = {
     }
   },
   updateSubject: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("subject:update")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const data = req.body;
     const id = req.params.id;
 
@@ -47,6 +59,12 @@ const SubjectsController = {
     }
   },
   deleteSubjects: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("subject:delete")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const id = req.params.id;
 
     try {

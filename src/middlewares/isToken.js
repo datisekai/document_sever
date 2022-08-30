@@ -19,6 +19,7 @@ const isToken = async (req, res, next) => {
     const privilege = userRole.map((item) => item.privilege.url_match);
 
     req.privilege = JSON.stringify(privilege);
+    req.user_id = detoken._id;
 
     next();
   } catch (error) {

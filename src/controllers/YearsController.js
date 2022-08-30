@@ -13,6 +13,12 @@ const YearController = {
     }
   },
   addYear: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("year:create")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const data = req.body;
 
     if (!data.name)
@@ -32,6 +38,12 @@ const YearController = {
     }
   },
   updateYear: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("year:update")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const id = req.params.id;
     const data = req.body;
 
@@ -57,6 +69,12 @@ const YearController = {
     }
   },
   deleteYear: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("year:delete")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const id = req.params.id;
 
     try {

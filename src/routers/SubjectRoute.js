@@ -1,5 +1,6 @@
 import express from "express";
 import SubjectsController from "../controllers/SubjectsController.js";
+import isToken from "../middlewares/isToken.js";
 
 const router = express.Router();
 
@@ -7,13 +8,13 @@ const router = express.Router();
 router.get("/", SubjectsController.getSubjectWithUniversity);
 
 // POST /api/subjects
-router.post("/", SubjectsController.addSubject);
+router.post("/", isToken, SubjectsController.addSubject);
 
 // PUT /api/subjects
-router.put("/:id", SubjectsController.updateSubject);
+router.put("/:id", isToken, SubjectsController.updateSubject);
 
 // DELETE /api/subjects
-router.delete("/:id", SubjectsController.deleteSubjects);
+router.delete("/:id", isToken, SubjectsController.deleteSubjects);
 
 // GET /api/subjects/search
 // query {
