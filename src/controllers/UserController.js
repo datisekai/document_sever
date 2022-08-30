@@ -74,7 +74,7 @@ const UserController = {
 
     if (!token) {
       return res
-        .status(404)
+        .status(401)
         .json({ success: false, message: "Vui lòng nhập token" });
     }
 
@@ -82,14 +82,14 @@ const UserController = {
       const detoken = jwt.verify(token, process.env.SECRET_JWT);
       if (!detoken) {
         return res
-          .status(404)
+          .status(401)
           .json({ success: false, message: "Token không khả dụng" });
       }
 
       let currentUser = await Users.findById(detoken._id).select("-password");
       if (!currentUser) {
         return res
-          .status(404)
+          .status(401)
           .json({ success: false, message: "Tài khoản không tồn tại" });
       }
 
@@ -123,7 +123,7 @@ const UserController = {
     } catch (error) {
       console.log(error);
       return res
-        .status(500)
+        .status(401)
         .json({ success: false, message: "Server gặp vấn đề, xin chờ!" });
     }
   },
