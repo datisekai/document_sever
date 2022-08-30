@@ -4,6 +4,11 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import connectDB from "./utils/connectDB.js";
 import UserRoute from "./routers/UserRoute.js";
+import PrivilegeGroupRoute from "./routers/PrivilegeGroupRoute.js";
+import PrivilegeRoute from "./routers/PrivilegeRoute.js";
+import AccessRoute from "./routers/AccessRoute.js";
+import SliderRoute from "./routers/SliderRoute.js";
+import FeedbackRoute from "./routers/FeedbackRoute.js";
 
 dotenv.config();
 
@@ -23,6 +28,11 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user", UserRoute);
+app.use("/api/privilege-group", PrivilegeGroupRoute);
+app.use("/api/privilege", PrivilegeRoute);
+app.use("/api/access", AccessRoute);
+app.use("/api/slider", SliderRoute);
+app.use("/api/feedback", FeedbackRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running in ${process.env.PORT}`);

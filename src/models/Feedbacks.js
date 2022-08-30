@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
-const Sliders = new Schema(
+const Feedback = new Schema(
   {
     content: {
       type: String,
@@ -16,4 +16,4 @@ const Sliders = new Schema(
   }
 );
 
-export default mongoose.model("sliders", Sliders);
+export default mongoose.model("feedbacks", Feedback);
