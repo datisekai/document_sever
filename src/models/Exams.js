@@ -25,7 +25,6 @@ const Exams = new Schema(
     user_id: {
       type: Schema.Types.ObjectId,
       ref: "users",
-      required: true,
     },
     title: {
       type: String,
