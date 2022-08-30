@@ -29,4 +29,8 @@ const Subjects = new Schema(
   }
 );
 
-export default mongoose.model("subjects", Subjects);
+Subjects.index({ name: "text" });
+const SubjectsModels = mongoose.model("Subjects", Subjects);
+SubjectsModels.createIndexes({ name: "text" });
+
+export default SubjectsModels;
