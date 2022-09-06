@@ -1,6 +1,7 @@
 import Exams from "../models/Exams.js";
 import slugify from "slugify";
 import SubjectsModels from "../models/Subjects.js";
+import Department from "../models/Department.js";
 
 const ExamsController = {
   addExams: async (req, res) => {
@@ -288,10 +289,18 @@ const ExamsController = {
     }
   },
   searchExam: async (req, res) => {
-    const { text, uni_id, sub_id, year_id, page = 1, limit = 10 } = req.query;
+    const {
+      text,
+      uni_id,
+      sub_id,
+      dep_id,
+      year_id,
+      page = 1,
+      limit = 10,
+    } = req.query;
     const skip = (page - 1) * limit;
 
-    if (!text.trim() && !uni_id && !sub_id && !year_id) {
+    if (!text.trim() && !uni_id && !sub_id && !year_id && !dep_id) {
       return res
         .status(400)
         .json({ success: false, message: "Vui lòng nhập đầy đủ" });
@@ -299,152 +308,110 @@ const ExamsController = {
 
     try {
       //Text
-      if (text && !uni_id && !sub_id && !year_id) {
-        const textReg = new RegExp(text, "i");
-        const results = await Exams.find({ title: textReg, status: true })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
 
-      if (text && uni_id && !sub_id && !year_id) {
-        const textReg = new RegExp(text, "i");
-        const uniList = await Subjects.find({ uni_id });
-        const subList = uniList._doc.map((item) => item._id);
+      if (text) {
+        if (!uni_id && !sub_id && !year_id && !dep_id) {
+          const textReg = new RegExp(text, "i");
+          const results = await Exams.find({ title: textReg, status: true })
+            .skip(skip)
+            .limit(limit)
+            .sort("-createdAt");
+          return res.json({ success: true, data: results });
+        }
 
-        const results = await Exams.find({
-          title: textReg,
-          sub_id: {
-            $in: subList,
-          },
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
+        if (uni_id && !sub_id && !year_id && !dep_id) {
+          const textReg = new RegExp(text, "i");
+          const deps = await Department.find({ uni_id });
+          const subList = deps._doc.map((item) => item._id);
+          const results = await Exams.find({
+            title: textReg,
+            sub_id: {
+              $in: subList,
+            },
+          })
+            .skip(skip)
+            .limit(limit)
+            .sort("-createdAt");
+          return res.json({ success: true, data: results });
+        }
 
-      if (text && sub_id && !year_id) {
-        const textReg = new RegExp(text, "i");
+        if (uni_id && !sub_id && !year_id && dep_id) {
+          const textReg = new RegExp(text, "i");
+          const subs = await SubjectsModels.find({ dep_id });
+          const subList = subs._doc.map((item) => item._id);
+          const results = await Exams.find({
+            title: textReg,
+            sub_id: {
+              $in: subList,
+            },
+          })
+            .skip(skip)
+            .limit(limit)
+            .sort("-createdAt");
+          return res.json({ success: true, data: results });
+        }
 
-        const results = await Exams.find({
-          title: textReg,
-          sub_id,
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
+        if (uni_id && sub_id && year_id && dep_id) {
+          const textReg = new RegExp(text, "i");
+          const results = await Exams.find({
+            title: textReg,
+            sub_id,
+            year_id,
+          })
+            .skip(skip)
+            .limit(limit)
+            .sort("-createdAt");
+          return res.json({ success: true, data: results });
+        }
+      } else {
+        if (!sub_id && !year_id && !dep_id) {
+          const deps = await Department.find({ uni_id });
+          const subList = deps._doc.map((item) => item._id);
+          const results = await Exams.find({
+            sub_id: {
+              $in: subList,
+            },
+          })
+            .skip(skip)
+            .limit(limit)
+            .sort("-createdAt");
+          return res.json({ success: true, data: results });
+        }
 
-      if (text && !uni_id && !sub_id && year_id) {
-        const textReg = new RegExp(text, "i");
+        if (!sub_id && !year_id && dep_id) {
+          const subs = await SubjectsModels.find({ dep_id });
+          const subList = subs._doc.map((item) => item._id);
+          const results = await Exams.find({
+            sub_id: {
+              $in: subList,
+            },
+          })
+            .skip(skip)
+            .limit(limit)
+            .sort("-createdAt");
+          return res.json({ success: true, data: results });
+        }
 
-        const results = await Exams.find({
-          title: textReg,
-          year_id,
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
+        if (sub_id && !year_id && dep_id) {
+          const results = await Exams.find({
+            sub_id,
+          })
+            .skip(skip)
+            .limit(limit)
+            .sort("-createdAt");
+          return res.json({ success: true, data: results });
+        }
 
-      //Uni_id
-      if (!text && uni_id && !sub_id && !year_id) {
-        const uniList = await Subjects.find({ uni_id });
-        const subList = uniList._doc.map((item) => item._id);
-
-        const results = await Exams.find({
-          sub_id: {
-            $in: subList,
-          },
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
-
-      if (!text && uni_id && !sub_id && year_id) {
-        const uniList = await Subjects.find({ uni_id });
-        const subList = uniList._doc.map((item) => item._id);
-
-        const results = await Exams.find({
-          sub_id: {
-            $in: subList,
-          },
-          year_id,
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
-
-      //Sub_id
-      if (!text && !uni_id && sub_id && !year_id) {
-        const results = await Exams.find({
-          sub_id,
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
-
-      if (!text && !uni_id && sub_id && year_id) {
-        const results = await Exams.find({
-          sub_id,
-          year_id,
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
-
-      //Year_id
-      if (!text && !uni_id && !sub_id && year_id) {
-        const results = await Exams.find({
-          year_id,
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
-
-      if (text && sub_id && year_id) {
-        const textReg = new RegExp(text, "i");
-
-        const results = await Exams.find({
-          title: textReg,
-          year_id,
-          sub_id,
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
-      }
-
-      if (text && uni_id && !sub_id && year_id) {
-        const uniList = await Subjects.find({ uni_id });
-        const subList = uniList._doc.map((item) => item._id);
-        const textReg = new RegExp(text, "i");
-
-        const results = await Exams.find({
-          title: textReg,
-          year_id,
-          sub_id: {
-            $in: subList,
-          },
-          status: true,
-        })
-          .skip(skip)
-          .limit(limit);
-        return res.json({ success: true, data: results });
+        if (sub_id && year_id && dep_id) {
+          const results = await Exams.find({
+            sub_id,
+            year_id,
+          })
+            .skip(skip)
+            .limit(limit)
+            .sort("-createdAt");
+          return res.json({ success: true, data: results });
+        }
       }
     } catch (error) {
       console.log(error);

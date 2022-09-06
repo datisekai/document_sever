@@ -14,6 +14,7 @@ import SubjectsRoute from "./routers/SubjectRoute.js";
 import YearsRoute from "./routers/YearsRoute.js";
 import ExamsRoute from "./routers/ExamsRoute.js";
 import SaveRoute from "./routers/SaveRoute.js";
+import DepartmentRoute from "./routers/DepartmentRoute.js";
 import CommentRoute from "./routers/CommentRoute.js";
 
 dotenv.config();
@@ -45,6 +46,7 @@ app.use("/api/years", YearsRoute);
 app.use("/api/exam", ExamsRoute);
 app.use("/api/comment", CommentRoute);
 app.use("/api/save", SaveRoute);
+app.use("/api/department", DepartmentRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running in ${process.env.PORT}`);

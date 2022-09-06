@@ -5,7 +5,7 @@ import isToken from "../middlewares/isToken.js";
 const router = express.Router();
 
 // GET /api/subjects/:uni_id
-router.get("/", SubjectsController.getSubjectWithUniversity);
+router.get("/", SubjectsController.getSubjectWithDepartment);
 
 // POST /api/subjects
 router.post("/", isToken, SubjectsController.addSubject);

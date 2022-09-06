@@ -13,7 +13,7 @@ const SubjectsController = {
     if (!data.sub || !data.name || !data.uni_id)
       return res.status(400).json({
         success: false,
-        message: "Thiếu tham số mã môn học, tên môn học, trường đại học",
+        message: "Thiếu tham số mã môn học, tên môn học, chuyên ngành",
       });
 
     try {
@@ -89,11 +89,11 @@ const SubjectsController = {
       });
     }
   },
-  getSubjectWithUniversity: async (req, res) => {
-    const universityId = req.query?.uni_id;
+  getSubjectWithDepartment: async (req, res) => {
+    const dep_id = req.query?.dep_id;
 
     try {
-      const subjectsResults = await Subjects.find({ uni_id: universityId });
+      const subjectsResults = await Subjects.find({ dep_id });
       return res.json({ success: true, data: subjectsResults });
     } catch (error) {
       return res.status(500).json({

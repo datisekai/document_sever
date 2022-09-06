@@ -18,9 +18,9 @@ const Subjects = new Schema(
       type: Boolean,
       default: true,
     },
-    uni_id: {
+    dep_id: {
       type: Schema.Types.ObjectId,
-      ref: "university",
+      ref: "departments",
       required: true,
     },
   },
