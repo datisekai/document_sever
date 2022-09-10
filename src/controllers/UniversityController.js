@@ -4,7 +4,7 @@ const UniversityController = {
   getAll: async (req, res) => {
     try {
       const university = await University.find();
-      return res.json({ success: true, university });
+      return res.json({ success: true, data: university });
     } catch (error) {
       return res.status(500).json({
         success: false,
@@ -30,7 +30,7 @@ const UniversityController = {
     try {
       const newUniversity = new University({ ...data });
       await newUniversity.save();
-      return res.json({ success: true, newUniversity });
+      return res.json({ success: true, data: newUniversity });
     } catch (error) {
       return res.status(500).json({
         success: false,
@@ -63,7 +63,7 @@ const UniversityController = {
         });
       }
 
-      return res.json({ success: true, updatedUniversity: data });
+      return res.json({ success: true, data });
     } catch (error) {
       return res.status(500).json({
         success: false,
@@ -95,7 +95,25 @@ const UniversityController = {
         });
       }
 
-      return res.json({ success: true, deteleUniversity });
+      return res.json({ success: true, data: deteleUniversity });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        success: false,
+        message: "Server đang gặp lỗi, vui lòng chờ!",
+      });
+    }
+  },
+  getUnivesityDetails: async (req, res) => {
+    try {
+      const id = req.params.id;
+      if (!id) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Bạn thiếu tham số id" });
+      }
+      const universityDetails = await University.findOne({ _id: id });
+      res.json({ success: true, data: universityDetails });
     } catch (error) {
       console.log(error);
       return res.status(500).json({

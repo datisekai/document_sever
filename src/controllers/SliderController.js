@@ -99,6 +99,20 @@ const SliderController = {
         .json({ success: false, message: "Server gặp vấn đề, xin chờ!" });
     }
   },
+  getSliderDetails: async (req, res) => {
+    try {
+      const _id = req.params.id;
+      if (!_id) {
+        return res.status(400).json("Bạn thiếu tham số id");
+      }
+      const sliderDetails = await Sliders.findOne({ _id });
+      res.json({ success: true, data: sliderDetails });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ success: false, message: "Server gặp vấn đề, xin chờ!" });
+    }
+  },
 };
 
 export default SliderController;

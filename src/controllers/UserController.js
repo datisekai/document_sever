@@ -205,7 +205,7 @@ const UserController = {
           .json({ success: false, message: "User không tồn tại" });
       }
 
-      return res.json({ success: true, data: currentUser });
+      return res.json({ success: true, data: { mssv, avatar, name, email } });
     } catch (error) {
       console.log(error);
       return res

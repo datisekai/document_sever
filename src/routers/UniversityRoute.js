@@ -7,6 +7,8 @@ const router = express.Router();
 // GET /api/university
 router.get("/", UniversityController.getAll);
 
+router.get("/:id", UniversityController.getUnivesityDetails);
+
 // POST /api/university
 router.post("/", isToken, UniversityController.addUniversity);
 
