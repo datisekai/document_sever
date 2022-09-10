@@ -3,12 +3,12 @@ import PrivilegeGroup from "../models/PrivilegeGroup.js";
 
 const PrivilegeController = {
   addPrivilege: async (req, res) => {
-    // const privilege = JSON.parse(req.privilege);
-    // if (!privilege.includes("privilege:create")) {
-    //   return res
-    //     .status(401)
-    //     .json({ success: false, message: "Bạn không có quyền truy cập" });
-    // }
+    const privilege = JSON.parse(req.privilege);
+    if (!privilege.includes("privilege:create")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Bạn không có quyền truy cập" });
+    }
     const { name, group_id, url_match, status = 1 } = req.body;
     if (!name || !group_id || !url_match) {
       return res
