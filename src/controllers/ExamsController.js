@@ -218,8 +218,15 @@ const ExamsController = {
     const slug = req.params.slug;
 
     try {
-      const exam = await Exams.findOne({ slug });
-      return res.json({ success: true, exam });
+      const exam = await Exams.findOne({ slug })
+        .populate("sub_id")
+        .populate("year")
+        .populate("user_id");
+      const recommends = await Exams.find({ sub_id: exam._doc.sub_id._id })
+        .sort("-createdAt")
+        .limit(5)
+        .skip(0);
+      return res.json({ success: true, exam, recommends });
     } catch (error) {
       return res.status(500).json({
         success: false,
