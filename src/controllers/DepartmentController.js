@@ -33,6 +33,7 @@ const DepartmentController = {
     }
   },
   updateDepartment: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
     if (!privilege.includes("department:update")) {
       return res
         .status(401)
@@ -65,6 +66,7 @@ const DepartmentController = {
     }
   },
   deleteDepartment: async (req, res) => {
+    const privilege = JSON.parse(req.privilege);
     if (!privilege.includes("department:delete")) {
       return res
         .status(401)
@@ -109,6 +111,35 @@ const DepartmentController = {
         "-createdAt"
       );
       return res.json({ success: true, data: departments });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        success: false,
+        message: "Server đang gặp lỗi, vui lòng chờ!",
+      });
+    }
+  },
+  getDepartments: async (req, res) => {
+    try {
+      const departments = await Department.find().populate("uni_id");
+      return res.json({ success: true, data: departments });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        success: false,
+        message: "Server đang gặp lỗi, vui lòng chờ!",
+      });
+    }
+  },
+  getDepartmentDetail: async (req, res) => {
+    if (!req.params.id) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Vui lòng nhập đầy đủ" });
+    }
+    try {
+      const department = await Department.findOne({ _id: req.params.id });
+      res.json({ success: true, data: department });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
