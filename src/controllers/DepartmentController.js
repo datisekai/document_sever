@@ -23,7 +23,10 @@ const DepartmentController = {
       });
 
       await newDepartment.save();
-      return res.json({ success: true, data: newDepartment });
+      const resultDepartment = await Department.findOne({
+        _id: newDepartment._id,
+      }).populate("uni_id");
+      return res.json({ success: true, data: resultDepartment });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
@@ -56,7 +59,10 @@ const DepartmentController = {
           .status(404)
           .json({ success: false, message: "Ngành này không tồn tại" });
       }
-      return res.json({ success: true, data: currentDep });
+      const resultDepartment = await Department.findOne({
+        _id: currentDep._id,
+      }).populate("uni_id");
+      return res.json({ success: true, data: resultDepartment });
     } catch (error) {
       console.log(error);
       return res.status(500).json({

@@ -10,7 +10,7 @@ const SubjectsController = {
     }
     const data = req.body;
 
-    if (!data.sub || !data.name || !data.uni_id)
+    if (!data.sub || !data.name || !data.dep_id)
       return res.status(400).json({
         success: false,
         message: "Thiếu tham số mã môn học, tên môn học, chuyên ngành",
@@ -19,7 +19,10 @@ const SubjectsController = {
     try {
       const newSubject = new Subjects({ ...data });
       await newSubject.save();
-      return res.json({ success: true, newSubject });
+      const resultSubject = await Subjects.findOne({
+        _id: newSubject._id,
+      }).populate("dep_id");
+      return res.json({ success: true, data: resultSubject });
     } catch (error) {
       return res.status(500).json({
         success: false,
@@ -81,7 +84,7 @@ const SubjectsController = {
         });
       }
 
-      return res.json({ success: true, message: "Xóa thành công" });
+      return res.json({ success: true, data: isDeleteSuccess });
     } catch (error) {
       return res.status(500).json({
         success: false,
@@ -113,6 +116,18 @@ const SubjectsController = {
       const textReg = new RegExp(q, "i");
       const results = await Subjects.find({ name: textReg });
       return res.json({ success: true, results });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        success: false,
+        message: "Server đang gặp lỗi, vui lòng chờ!",
+      });
+    }
+  },
+  getAllSubjects: async (req, res) => {
+    try {
+      const subjects = await Subjects.find().populate("dep_id");
+      res.json({ success: true, data: subjects });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
